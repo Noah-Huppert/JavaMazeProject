@@ -24,4 +24,18 @@ public enum Direction {
 
         return point;
     }
+
+    public static Direction opposite(Direction direction){
+        if(direction == UP){
+            return DOWN;
+        } else if(direction == DOWN){
+            return UP;
+        } else if(direction == RIGHT){
+            return LEFT;
+        } else if(direction == LEFT){
+            return RIGHT;
+        }
+
+        return direction;
+    }
 }

@@ -6,6 +6,8 @@ package com.noahhuppert.basicmaze;
 
 import com.noahhuppert.basicmaze.models.EnhancedMaze;
 import com.noahhuppert.basicmaze.models.Maze;
+import com.noahhuppert.basicmaze.models.MazePoint;
+import com.noahhuppert.basicmaze.models.solvers.DepthFirstSolver;
 
 public class MazeMain {
 		public static void main(String args[]) {
@@ -13,7 +15,10 @@ public class MazeMain {
 			maze.printMaze();
 
 			EnhancedMaze enhancedMaze = new EnhancedMaze(maze);
+			DepthFirstSolver depthFirstSolver = new DepthFirstSolver(enhancedMaze);
 
-			System.out.println(enhancedMaze.getEmptyPointsNextTo(enhancedMaze.getCursorCoords()));
+			MazePoint endPoint = new MazePoint(maze.getEndCoords());
+
+			System.out.println(depthFirstSolver.solve(endPoint));
 		}
 }

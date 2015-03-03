@@ -33,40 +33,38 @@ public class EnhancedMaze {
         return maze.isPassable(point.getCoords());
     }
 
-    public List<MazePoint> getPointsNextTo(MazePoint point){
-        List<MazePoint> points = new ArrayList<MazePoint>();
+    public List<RelativeMazePoint> getPointsNextTo(MazePoint point){
+        List<RelativeMazePoint> points = new ArrayList<RelativeMazePoint>();
 
-        MazePoint upPoint = Direction.transform(point, Direction.UP);
-        MazePoint downPoint = Direction.transform(point, Direction.DOWN);
-        MazePoint rightPoint = Direction.transform(point, Direction.RIGHT);
-        MazePoint leftPoint = Direction.transform(point, Direction.LEFT);
+        for(Direction direction : Direction.values()){
+            MazePoint transformedMazePoint = Direction.transform(point, direction);
+            RelativeMazePoint relativeMazePoint = new RelativeMazePoint(transformedMazePoint.getCoords().x, transformedMazePoint.getCoords().y, direction);
 
-        if (isValidPoint(upPoint)) {
-            points.add(upPoint);
-        }
-
-        if (isValidPoint(downPoint)) {
-            points.add(downPoint);
-        }
-
-        if (isValidPoint(rightPoint)) {
-            points.add(rightPoint);
-        }
-
-        if (isValidPoint(leftPoint)) {
-            points.add(leftPoint);
+            if(isValidPoint(relativeMazePoint)){
+                points.add(relativeMazePoint);
+            }
         }
 
         return points;
     }
 
-    public List<MazePoint> getEmptyPointsNextTo(MazePoint point){
-        List<MazePoint> points = getPointsNextTo(point);
+    public List<RelativeMazePoint> getEmptyPointsNextTo(MazePoint point){
+        List<RelativeMazePoint> points = getPointsNextTo(point);
 
-        for(int i = points.size(); i < points.size(); i--){
-            MazePoint ip = points.get(i);
+        for(int i = points.size() - 1; i >= 0; i--){
+            if(!points.get(i).getEmpty()){
+                points.remove(i);
+            }
+        }
 
-            if(!ip.getEmpty()){
+        return points;
+    }
+
+    public List<RelativeMazePoint> getUnvistedEmptyPointsNextTo(MazePoint point){
+        List<RelativeMazePoint> points = getEmptyPointsNextTo(point);
+
+        for(int i = points.size() - 1; i >= 0; i--){
+            if(point.getVisitedDirs().contains(points.get(i).getDirection())){
                 points.remove(i);
             }
         }
@@ -81,6 +79,10 @@ public class EnhancedMaze {
 
     public MazePoint getPoint(int x, int y){
         return getGrid().get(x).get(y);
+    }
+
+    public MazePoint getPoint(MazeCoords coords){
+        return getPoint(coords.x, coords.y);
     }
 
     public MazePoint getCursorCoords() {
