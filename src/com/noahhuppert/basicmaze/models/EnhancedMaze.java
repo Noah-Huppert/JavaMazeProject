@@ -21,6 +21,7 @@ public class EnhancedMaze {
             for(int h = 0; h < maze.getHeight(); h++){
                 MazePoint point = new MazePoint(new MazeCoords(w, h));
                 point.setEmpty(!maze.grid[w][h]);
+
                 grid.get(w).add(h, point);
             }
         }
@@ -29,27 +30,75 @@ public class EnhancedMaze {
     }
 
     /* Actions */
+    private int isPointPartOfSolution(List<MazePointNode> solution, MazeCoords coords){
+        int i = 0;
+        for(MazePointNode node : solution){
+            if(node.getMazePoint().getCoords().x == coords.x && node.getMazePoint().getCoords().y == coords.y){
+                return i;
+            }
+
+            i++;
+        }
+
+        return -1;
+    }
+
+
+    public void printSolution(List<MazePointNode> nodes){
+        for (int i = 0; i < maze.width + 2; i++)
+            System.out.print("*");
+            System.out.println();
+        for (int row = 0; row < maze.height; row++) {
+            System.out.print("*");
+            for (int col = 0; col < maze.width; col++) {
+                MazeCoords coords = new MazeCoords(col, row);
+
+                int isPartOfSol = isPointPartOfSolution(nodes, coords);
+
+                if (isPartOfSol != -1) {
+                    System.out.print(isPartOfSol);
+                } else if (maze.isStartSquare(coords)) {
+                    System.out.print("S");
+                }else if (maze.isEndSquare(coords)) {
+                    System.out.print("E");
+                }else if(maze.isPassable(coords)) {
+                    System.out.print(" ");
+                } else{
+                    System.out.print("*");
+                }
+            }
+            System.out.println("*");
+        }
+        for (int i = 0; i < maze.width + 2; i++)
+            System.out.print("*");
+        System.out.println();
+    }
+
+
     public boolean isValidPoint(MazePoint point){
         return maze.isPassable(point.getCoords());
     }
 
-    public List<RelativeMazePoint> getPointsNextTo(MazePoint point){
-        List<RelativeMazePoint> points = new ArrayList<RelativeMazePoint>();
+    public List<MazePoint> getPointsNextTo(MazePoint point){
+        List<MazePoint> points = new ArrayList<MazePoint>();
 
         for(Direction direction : Direction.values()){
             MazePoint transformedMazePoint = Direction.transform(point, direction);
-            RelativeMazePoint relativeMazePoint = new RelativeMazePoint(transformedMazePoint.getCoords().x, transformedMazePoint.getCoords().y, direction);
 
-            if(isValidPoint(relativeMazePoint)){
-                points.add(relativeMazePoint);
+            if(transformedMazePoint.getCoords().x >= 0 && transformedMazePoint.getCoords().x < maze.getWidth() &&
+               transformedMazePoint.getCoords().y >= 0 && transformedMazePoint.getCoords().y < maze.getHeight()){
+
+                transformedMazePoint.setEmpty(getPoint(transformedMazePoint.getCoords()).getEmpty());
+                transformedMazePoint.setVisited(getPoint(transformedMazePoint.getCoords()).getVisited());
+                points.add(transformedMazePoint);
             }
         }
 
         return points;
     }
 
-    public List<RelativeMazePoint> getEmptyPointsNextTo(MazePoint point){
-        List<RelativeMazePoint> points = getPointsNextTo(point);
+    public List<MazePoint> getEmptyPointsNextTo(MazePoint point) {
+        List<MazePoint> points = getPointsNextTo(point);
 
         for(int i = points.size() - 1; i >= 0; i--){
             if(!points.get(i).getEmpty()){
@@ -60,11 +109,11 @@ public class EnhancedMaze {
         return points;
     }
 
-    public List<RelativeMazePoint> getUnvistedEmptyPointsNextTo(MazePoint point){
-        List<RelativeMazePoint> points = getEmptyPointsNextTo(point);
+    public List<MazePoint> getUnvistedEmptyPointsNextTo(MazePoint point){
+        List<MazePoint> points = getEmptyPointsNextTo(point);
 
         for(int i = points.size() - 1; i >= 0; i--){
-            if(point.getVisitedDirs().contains(points.get(i).getDirection())){
+            if(points.get(i).getVisited()){
                 points.remove(i);
             }
         }
@@ -96,5 +145,9 @@ public class EnhancedMaze {
 
     public void setCursorCoords(MazePoint cursorCoords) {
         this.cursorCoords = cursorCoords;
+    }
+
+    public void moveCursorTo(MazePoint point){
+        setCursorCoords(getPoint(point.getCoords().x, point.getCoords().y));
     }
 }

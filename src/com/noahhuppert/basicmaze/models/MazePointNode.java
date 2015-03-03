@@ -12,6 +12,12 @@ public class MazePointNode {
         this.parent = parent;
     }
 
+    /* Actions */
+    @Override
+    public String toString(){
+        return "[Point => " + getMazePoint() + " | Parent => " + (getParent() != null ? getParent().getMazePoint() : null) + "]";
+    }
+
     /* Getters */
     public MazePoint getMazePoint() {
         return mazePoint;

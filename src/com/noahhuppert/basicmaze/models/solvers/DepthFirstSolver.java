@@ -20,16 +20,25 @@ public class DepthFirstSolver {
         nodes.add(new MazePointNode(maze.getCursorCoords(), null));
 
         while(true) {
-            List<RelativeMazePoint> moveOptions = maze.getUnvistedEmptyPointsNextTo(maze.getCursorCoords());
+            List<MazePoint> visitOptions = maze.getUnvistedEmptyPointsNextTo(maze.getCursorCoords());
 
-            if (moveOptions.size() != 0) {
-                RelativeMazePoint movingTo = moveOptions.get(0);
+            if(visitOptions.size() == 0 && nodes.size() != 0){
+                MazePoint lastPoint = nodes.get(nodes.size() - 1).getParent().getMazePoint();
 
-                System.out.println("Cursor => " + maze.getCursorCoords() + " Moving To => " + movingTo);
+                maze.moveCursorTo(lastPoint);
+                nodes.remove(nodes.size() - 1);
+                break;
+            } else if(nodes.size() != 0){
+                MazePoint visiting = visitOptions.get(0);
+                MazePointNode parent = nodes.get(nodes.size() - 1);
 
-                maze.getCursorCoords().getVisitedDirs().add(movingTo.getDirection());
+                maze.getCursorCoords().setVisited(true);
+                maze.moveCursorTo(visiting);
 
-                maze.setCursorCoords(maze.getPoint(movingTo.getCoords()));
+                System.out.println(maze.getCursorCoords());
+
+                MazePointNode pointNode = new MazePointNode(visiting, parent);
+                nodes.add(pointNode);
             } else {
                 break;
             }

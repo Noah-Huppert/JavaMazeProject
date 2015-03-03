@@ -8,26 +8,26 @@ import java.util.List;
  */
 public class MazePoint {
     private MazeCoords coords;
-    private List<Direction> visitedDirs;
+    private boolean visited;
     private boolean empty;
 
     public MazePoint(MazeCoords coords){
         this.coords = coords;
-        this.visitedDirs = new ArrayList<Direction>();
+        this.visited = false;
         empty = true;
     }
 
 
     public MazePoint(int x, int y){
         this.coords = new MazeCoords(x, y);
-        this.visitedDirs = new ArrayList<Direction>();
+        this.visited = false;
         empty = true;
     }
 
     /* Actions */
     @Override
     public String toString(){
-        return "[Coords => " + getCoords() + " | Visited => " + getVisitedDirs() + " | Emtpy => " + getEmpty() + "]";
+        return "[Coords => " + getCoords() + " | Visited => " + getVisited() + " | Emtpy => " + getEmpty() + "]";
     }
 
     /* Getters */
@@ -35,8 +35,8 @@ public class MazePoint {
         return coords;
     }
 
-    public List<Direction> getVisitedDirs() {
-        return visitedDirs;
+    public boolean getVisited(){
+        return visited;
     }
 
     public boolean getEmpty() {
@@ -48,8 +48,8 @@ public class MazePoint {
         this.coords = coords;
     }
 
-    public void setVisitedDirs(List<Direction> visitedDirs) {
-        this.visitedDirs = visitedDirs;
+    public void setVisited(boolean visited){
+        this.visited = visited;
     }
 
     public void setEmpty(boolean empty) {
